@@ -18,26 +18,34 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="1" Margin="0 0 0 20"
              FontSize="64" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontFamily="Segoe UI Light">
             Login Form
         </TextBlock>
+        
+        <!--error message row-->
+        <TextBlock x:Name="ErrorMessage" Visibility="{Binding IsErrorVisible, Converter={StaticResource BooleanToVisibilityConverter},FallbackValue=Collapsed}"
+             Margin="0 0 0 20" MaxWidth="300" TextWrapping="Wrap"
+            Foreground="Red"   Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
+
+
         <!--Username row-->
-        <TextBlock  Grid.Row="1" Grid.Column="1" Margin="0 0 0 20">
+        <TextBlock  Grid.Row="2" Grid.Column="1" Margin="0 0 5 20">
             Username:
         </TextBlock>
-        <TextBox x:Name="UserName" Grid.Row="1" Grid.Column="2" MinWidth="150"
+        <TextBox x:Name="UserName" Grid.Row="2" Grid.Column="2" MinWidth="350"
                  Margin="0 0 0 10"/>
 <!--Password row-->
-        <TextBlock  Grid.Row="2" Grid.Column="1" Margin="0 0 0 20">
+        <TextBlock  Grid.Row="3" Grid.Column="1" Margin="0 0 5 20">
             Password:
         </TextBlock>
-        <PasswordBox x:Name="Password" Grid.Row="2" Grid.Column="2" MinWidth="150"
+        <PasswordBox x:Name="Password" Grid.Row="3" Grid.Column="2" MinWidth="350"
                  Margin="0 0 0 20" FontFamily="Segoe UI Light"/>
         <!--Login row-->
-        <Button  Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+        <Button  Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2"
            HorizontalAlignment="Center" Padding="20 5" x:Name="LogIn">
             Log In
         </Button>
