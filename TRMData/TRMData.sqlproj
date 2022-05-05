@@ -70,6 +70,7 @@
     <Build Include="Dbo\Tables\Product.sql" />
     <Build Include="Dbo\Tables\Inventory.sql" />
     <Build Include="Dbo\Stored Procedures\spUserLookUp.sql" />
+    <Build Include="Dbo\Stored Procedures\spProduce_GetAll.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="TRMData.refactorlog" />
