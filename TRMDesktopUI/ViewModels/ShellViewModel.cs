@@ -21,7 +21,7 @@ namespace TRMDesktopUI.ViewModels
             _container = container;
             _events.SubscribeOnUIThread(this);
            
-            ActivateItemAsync(_container.GetInstance<LoginViewModel>());
+            ActivateItemAsync(IoC.Get<LoginViewModel>());
         }
 
         public async Task HandleAsync(LogOnEvent message, CancellationToken cancellationToken)
