@@ -12,10 +12,13 @@ namespace TRMDesktopUI.ViewModels
     public class SalesViewModel:Screen
     {
         private IProductsEndpoint _productsEndpoint;
+        private ISaleEndpoint _saleEndpoint;
         IConfigHelper _configHelper;
-        public  SalesViewModel(IProductsEndpoint productsEndpoint, IConfigHelper configHelper)
+        public  SalesViewModel(IProductsEndpoint productsEndpoint,
+            IConfigHelper configHelper, ISaleEndpoint saleEndpoint)
         {
             _productsEndpoint = productsEndpoint;
+            _saleEndpoint = saleEndpoint;
             _configHelper = configHelper;
         }
 
@@ -160,6 +163,7 @@ namespace TRMDesktopUI.ViewModels
             SelectedProduct.QuantityInStock -= ItemQuantity;
             ItemQuantity = 1;
             NotifyOfPropertyChange(() => SubTotal);
+            NotifyOfPropertyChange(() => CanCheckOut);
             NotifyOfPropertyChange(() => Tax);
             NotifyOfPropertyChange(() => Total);
             NotifyOfPropertyChange(() => extingItem.DisplayText);
@@ -179,6 +183,7 @@ namespace TRMDesktopUI.ViewModels
         }
         public void RemoveFromCart()
         {
+            NotifyOfPropertyChange(() => CanCheckOut);
             NotifyOfPropertyChange(() => SubTotal);
             NotifyOfPropertyChange(() => Tax);
             NotifyOfPropertyChange(() => Total);
@@ -189,15 +194,28 @@ namespace TRMDesktopUI.ViewModels
             get
             {
                 bool output = false;
-                //make sure there is something in the cart
+                if (Cart.Count > 0)
+                {
+                    output = true;
+                }
                 return output;
             }
 
         }
 
-        public void CheckOut()
+        public async Task CheckOut()
         {
-
+            //create a sale model and post to the API
+            SaleModel sale = new SaleModel();
+            foreach(var item in Cart)
+            {
+                sale.SaleDetails.Add(new SaleDetailModel
+                {
+                    ProductId = item.Product.Id,
+                    Quantity = item.QuantityInCart
+                });
+            }
+           await _saleEndpoint.PostSale(sale);
         }
 
     }
