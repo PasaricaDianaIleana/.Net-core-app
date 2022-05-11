@@ -1,4 +1,5 @@
-﻿using Caliburn.Micro;
+﻿using AutoMapper;
+using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using TRMDesktopUI.Helpers;
 using TRMDesktopUI.Library.API;
 using TRMDesktopUI.Library.Helpers;
 using TRMDesktopUI.Library.Models;
+using TRMDesktopUI.Models;
 using TRMDesktopUI.ViewModels;
 
 namespace TRMDesktopUI
@@ -26,6 +28,8 @@ namespace TRMDesktopUI
         }
         protected override void Configure()
         {
+            var mapper = ConfigureAutomapper();
+            _container.Instance(mapper);
             _container.Instance(_container)
                 .PerRequest<IProductsEndpoint,ProductsEndpoint>()
                 .PerRequest<ISaleEndpoint,SaleEndpoint>();
@@ -44,7 +48,17 @@ namespace TRMDesktopUI
                 .ForEach(viewModelType => _container.RegisterPerRequest(
                     viewModelType, viewModelType.ToString(), viewModelType));
         }
+        private IMapper ConfigureAutomapper()
+        {
 
+            var config = new MapperConfiguration(cfg => {
+                cfg.CreateMap<ProductModel, ProductDisplayModel>();
+                cfg.CreateMap<CartItemModel, CartItemDisplayModel>();
+            });
+            var output = config.CreateMapper();
+
+            return output;
+        }
         protected override void OnStartup(object sender, StartupEventArgs e)
         {
             //on start up launch SgellViewModel as base view
