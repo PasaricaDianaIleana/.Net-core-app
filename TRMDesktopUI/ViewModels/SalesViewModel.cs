@@ -28,6 +28,7 @@ namespace TRMDesktopUI.ViewModels
 
         protected  override  async void OnViewLoaded(object view)
         {
+            base.OnViewLoaded(view);
             await LoadProducts();
         }
         private async Task LoadProducts()
@@ -63,6 +64,16 @@ namespace TRMDesktopUI.ViewModels
 
         private BindingList<CartItemDisplayModel> cart = new BindingList<CartItemDisplayModel>();
 
+        private async Task ResetSalesViewModel()
+        {
+            Cart = new BindingList<CartItemDisplayModel>();
+            await LoadProducts();
+
+            NotifyOfPropertyChange(() => CanCheckOut);
+            NotifyOfPropertyChange(() => SubTotal);
+            NotifyOfPropertyChange(() => Tax);
+            NotifyOfPropertyChange(() => Total);
+        }
         public BindingList<CartItemDisplayModel> Cart
         {
             get { return cart; }
@@ -84,7 +95,18 @@ namespace TRMDesktopUI.ViewModels
                 NotifyOfPropertyChange(() => CanAddTocCart);
             }
         }
+        private CartItemDisplayModel _selectedCartItem;
 
+        public CartItemDisplayModel SelectedCartItem
+        {
+            get { return _selectedCartItem; }
+            set
+            {
+                _selectedCartItem = value;
+                NotifyOfPropertyChange(() => _selectedCartItem);
+                NotifyOfPropertyChange(() => CanRemoveFromCart);
+            }
+        }
         public string SubTotal
         {
             get 
@@ -178,7 +200,10 @@ namespace TRMDesktopUI.ViewModels
             {
                 bool output = false;
                 //make sure that something is selected
-           
+                if (SelectedCartItem != null && SelectedCartItem?.QuantityInCart>0)
+                {
+                    output = true;
+                }
                 return output;
             }
 
@@ -186,9 +211,19 @@ namespace TRMDesktopUI.ViewModels
         }
         public void RemoveFromCart()
         {
+            SelectedCartItem.Product.QuantityInStock += 1;
+            if (SelectedCartItem.QuantityInCart > 1)
+            {
+                SelectedCartItem.QuantityInCart -= 1;
+            }
+            else
+            {
+                Cart.Remove(SelectedCartItem);
+            }
             NotifyOfPropertyChange(() => CanCheckOut);
             NotifyOfPropertyChange(() => SubTotal);
             NotifyOfPropertyChange(() => Tax);
+            NotifyOfPropertyChange(() => CanAddTocCart);
             NotifyOfPropertyChange(() => Total);
         }
 
@@ -219,6 +254,8 @@ namespace TRMDesktopUI.ViewModels
                 });
             }
            await _saleEndpoint.PostSale(sale);
+
+            await ResetSalesViewModel();
         }
 
     }
