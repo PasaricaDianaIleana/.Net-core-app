@@ -26,6 +26,10 @@ namespace TRMDesktopUI.Library.API
                 return _apiClient;
             } 
         }
+        public void LogOfUser()
+        {
+            _apiClient.DefaultRequestHeaders.Clear();
+        }
         private void InitializeClient()
         {
             string api = ConfigurationManager.AppSettings["api"];

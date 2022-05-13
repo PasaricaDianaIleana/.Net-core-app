@@ -16,7 +16,7 @@ namespace TRMDesktopUI.Library.Models
 
         public string Token { get; set; }
 
-        public void LogOffUser()
+        public void ResetUserModel()
         {
             Token = string.Empty;
             EmailAddress = string.Empty;
