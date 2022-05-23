@@ -32,7 +32,8 @@ namespace TRMDesktopUI
             _container.Instance(mapper);
             _container.Instance(_container)
                 .PerRequest<IProductsEndpoint,ProductsEndpoint>()
-                .PerRequest<ISaleEndpoint,SaleEndpoint>();
+                .PerRequest<ISaleEndpoint,SaleEndpoint>()
+                .PerRequest<IUserEndpoint,UserEndpoint>();
             
             _container
                 .Singleton<IWindowManager, WindowManager>()

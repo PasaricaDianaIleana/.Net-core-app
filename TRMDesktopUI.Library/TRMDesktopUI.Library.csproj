@@ -37,6 +37,9 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,10 +52,13 @@
     <Compile Include="API\IAPIHelper.cs" />
     <Compile Include="API\IProductsEndpoint.cs" />
     <Compile Include="API\ISaleEndpoint.cs" />
+    <Compile Include="API\IUserEndpoint.cs" />
     <Compile Include="API\ProductsEndpoint.cs" />
     <Compile Include="API\SaleEndpoint.cs" />
+    <Compile Include="API\UserEndpoint.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\IConfigHelper.cs" />
+    <Compile Include="Models\UserModel.cs" />
     <Compile Include="Models\AuthenticatedUser.cs" />
     <Compile Include="Models\CartItemModel.cs" />
     <Compile Include="Models\ILoggedInUserModel.cs" />
