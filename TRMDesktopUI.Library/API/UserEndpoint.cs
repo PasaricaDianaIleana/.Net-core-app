@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
 using TRMDesktopUI.Library.Models;
 
 namespace TRMDesktopUI.Library.API
@@ -51,9 +50,8 @@ namespace TRMDesktopUI.Library.API
 
         public async Task AddUserToRole(string userId, string roleName)
         {
-            var serializer = new JavaScriptSerializer();
             var model = new { userId, roleName };
-            var json = serializer.Serialize(model);
+            var json = JsonConvert.SerializeObject(model);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             using (HttpResponseMessage response = await _apiHelper.ApiClient.PostAsync("api/User/Admin/AddRole",stringContent))
             {
@@ -67,9 +65,8 @@ namespace TRMDesktopUI.Library.API
 
         public async Task RemoveRoleFromUser(string userId, string roleName)
         {
-            var serializer = new JavaScriptSerializer();
             var model = new { userId, roleName };
-            var json = serializer.Serialize(model);
+            var json = JsonConvert.SerializeObject(model);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             using (HttpResponseMessage response = await _apiHelper.ApiClient.PostAsync("api/User/Admin/RemoveRole", stringContent))
             {
