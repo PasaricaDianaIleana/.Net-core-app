@@ -13,7 +13,8 @@ namespace TRMApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Cashier")]
+    [Authorize]
+
     public class ProductController : ControllerBase
     {
         private readonly IConfiguration _config;
@@ -22,6 +23,7 @@ namespace TRMApi.Controllers
             _config = config;
         }
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public List<ProductModel> Get()
         {
             ProductData data = new ProductData(_config);
