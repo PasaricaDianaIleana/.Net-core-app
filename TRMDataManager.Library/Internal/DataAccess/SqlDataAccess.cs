@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace TRMDataManager.Library.Internal.DataAccess
 {
-    internal class SqlDataAccess:IDisposable
+    public class SqlDataAccess : IDisposable, ISqlDataAccess
     {
         private readonly IConfiguration _config;
         public SqlDataAccess(IConfiguration config)
@@ -22,7 +22,7 @@ namespace TRMDataManager.Library.Internal.DataAccess
             return _config.GetConnectionString(name);
         }
 
-        public List<T> LoadData<T,U>(string storedProcedure, U parameters, string connectionStringName)
+        public List<T> LoadData<T, U>(string storedProcedure, U parameters, string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);
             using (IDbConnection connection = new SqlConnection(connectionString))
@@ -31,11 +31,11 @@ namespace TRMDataManager.Library.Internal.DataAccess
                     Query<T>(storedProcedure, parameters, commandType: CommandType.StoredProcedure).ToList();
 
                 return rows;
-            
+
             }
         }
 
-        public  void SaveData<T>(string storedProcedure, T parameters, string connectionStringName)
+        public void SaveData<T>(string storedProcedure, T parameters, string connectionStringName)
         {
             string connectionString = GetConnectionString(connectionStringName);
             using (IDbConnection connection = new SqlConnection(connectionString))
@@ -87,22 +87,22 @@ namespace TRMDataManager.Library.Internal.DataAccess
             }
             _transaction = null;
             _connection = null;
-            
+
         }
         public void SaveDataInTransaction<T>(string storedProcedure, T parameters)
         {
-           _connection.Execute(storedProcedure, parameters, 
-               commandType: CommandType.StoredProcedure,transaction:_transaction);
-           
+            _connection.Execute(storedProcedure, parameters,
+                commandType: CommandType.StoredProcedure, transaction: _transaction);
+
         }
 
-        public List<T> LoadDataInTransaction<T, U>(string storedProcedure,  U parameters )
+        public List<T> LoadDataInTransaction<T, U>(string storedProcedure, U parameters)
         {
-             List<T> rows = 
-                _connection.Query<T>(storedProcedure, parameters, 
-                commandType: CommandType.StoredProcedure, transaction:_transaction).ToList();
+            List<T> rows =
+               _connection.Query<T>(storedProcedure, parameters,
+               commandType: CommandType.StoredProcedure, transaction: _transaction).ToList();
 
-                return rows;
+            return rows;
 
         }
     }

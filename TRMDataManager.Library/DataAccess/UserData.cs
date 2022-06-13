@@ -9,22 +9,18 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Library.DataAccess
 {
-   public class UserData
+    public class UserData : IUserData
     {
-        private readonly IConfiguration _config;
-        public UserData(IConfiguration config)
-        {
-            _config = config;
-        }
-        public List<UserModel> GetUserById(string id)
-        {
-            SqlDataAccess sql = new SqlDataAccess(_config);
+        private readonly ISqlDataAccess _sqlData;
 
-            var p = new
-            {
-                Id = id
-            };
-           var output = sql.LoadData<UserModel,dynamic>("spUserLookUp", p, "TRMData") ;
+        public UserData(ISqlDataAccess sqlData)
+        {
+            _sqlData = sqlData;
+        }
+        public List<UserModel> GetUserById(string Id)
+        {
+         
+            var output = _sqlData.LoadData<UserModel, dynamic>("spUserLookUp", new { Id }, "TRMData");
 
             return output;
         }

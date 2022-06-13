@@ -9,30 +9,32 @@ using TRMDataManager.Library.Models;
 
 namespace TRMDataManager.Library.DataAccess
 {
-   public class SaleData
+    public class SaleData : ISaleData
     {
-        private readonly IConfiguration _config;
-        public SaleData(IConfiguration config)
+        private readonly IProductData _productData;
+        private readonly ISqlDataAccess _sqlData;
+
+        public SaleData(IProductData productData,ISqlDataAccess sqlData)
         {
-            _config = config;
+            _productData = productData;
+            _sqlData = sqlData;
         }
         public void SaveSale(SaleModel saleInfo, string cashierId)
         {
             //Start filling in the model will save to database
             List<SaleDetailDBModel> details = new List<SaleDetailDBModel>();
-            ProductData products = new ProductData(_config);
-            var taxRate = ConfigHelper.GetTaxRate()/100;
+            var taxRate = ConfigHelper.GetTaxRate() / 100;
 
             foreach (var item in saleInfo.SaleDetails)
             {
-               var detail = new SaleDetailDBModel
+                var detail = new SaleDetailDBModel
                 {
                     ProductId = item.ProductId,
                     Quantity = item.Quantity
                 };
                 //get the information about this product
-                var productInfo = products.GetProductById(detail.ProductId);
-                if(productInfo == null)
+                var productInfo = _productData.GetProductById(detail.ProductId);
+                if (productInfo == null)
                 {
                     throw new Exception($"The product id of{detail.ProductId} could not be found in the database");
                 }
@@ -52,16 +54,13 @@ namespace TRMDataManager.Library.DataAccess
             };
             sale.Total = sale.SubTotal + sale.Tax;
 
-           
-            using(SqlDataAccess sql = new SqlDataAccess(_config))
-            {
                 try
                 {
-                    sql.StartTransaction("TRMData");
-                    //save the sale model
-                    sql.SaveDataInTransaction("dbo.spSale_Insert", sale);
+                    _sqlData.StartTransaction("TRMData");
+                     //save the sale model
+                    _sqlData.SaveDataInTransaction("dbo.spSale_Insert", sale);
 
-                    sale.Id = sql.LoadDataInTransaction<int, dynamic>
+                    sale.Id = _sqlData.LoadDataInTransaction<int, dynamic>
                    ("dbo.spSale_LookUp", new { sale.CashierId, sale.SaleDate }).FirstOrDefault();
 
                     //finish filling in the sale detail models
@@ -70,23 +69,20 @@ namespace TRMDataManager.Library.DataAccess
                         //save the sale details models
                         item.SaleId = sale.Id;
                         //get the id from sale model
-                        sql.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
+                        _sqlData.SaveDataInTransaction("dbo.spSaleDetail_Insert", item);
                     }
-                    sql.CommitTransaction();
+                    _sqlData.CommitTransaction();
                 }
                 catch
                 {
-                    sql.RollbackTransaction();
+                    _sqlData.RollbackTransaction();
                     throw;
                 }
-             
-            }
 
         }
-        public  List<SaleReportModel> GetSaleReport()
+        public List<SaleReportModel> GetSaleReport()
         {
-            SqlDataAccess sql = new SqlDataAccess(_config);
-            var output = sql.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new { }, "TRMData");
+            var output = _sqlData.LoadData<SaleReportModel, dynamic>("dbo.spSale_SaleReport", new { }, "TRMData");
 
             return output;
         }
